@@ -8,7 +8,7 @@ int main(){
 	sum = 0;
 	
 	for (int i=0; i<=n; i++){
-		sum += (double) pow(-1,i)*1/((double)pow(2,2*i));
+		sum += pow(-1,i)*1/(pow(2,2*i));
 	}
 	printf("the sum is %f \n", sum);
 	
