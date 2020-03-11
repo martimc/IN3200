@@ -8,9 +8,43 @@ void swap(int* xp, int* yp) {
 	*yp = temp;
 }
 
+int partition (int *arr, int low, int high, int *arr2) {
+	int pivot = arr[high];
+	int pivot2 = arr2[high];
+	int i = (low-1);
+
+	for (int j = low; j <= high-1; j++) {
+		if (arr[j] < pivot) {
+			i++;
+			swap(&arr[i], &arr[j]);
+			swap(&arr2[i], &arr2[j]);
+		}
+		if (arr[j] == pivot) {
+			if (arr2[j] < pivot2) {
+				i++;
+				swap(&arr[i], &arr[j]);
+				swap(&arr2[i], &arr2[j]);
+			}
+		}
+	}
+	i++;
+	swap(&arr[i], &arr[high]);
+	swap(&arr2[i], &arr2[high]); 
+	return (i);
+}
+
+void quicksort(int *sort, int low, int high, int *col_idx) {
+	if (low <= high) {
+		int pi = partition(sort, low, high, col_idx);
+
+		quicksort(sort, low, pi-1, col_idx);
+		quicksort(sort, pi+1, high, col_idx);
+	}
+}
+
 void read_graph_from_file1 (char *filename, int *N, int *N_links, int **row_ptr, int **col_idx){
 	FILE* datafile;
-	int j, i, min_idx, nodes, edges, *sort;
+	int j, i, low, high, nodes, edges, *sort;
 
 	datafile = fopen(filename, "r");
 
@@ -49,8 +83,7 @@ void read_graph_from_file1 (char *filename, int *N, int *N_links, int **row_ptr,
 	}
 	fclose(datafile);
 	printf("done reading file\n");
-
-	int k = 1;
+	/*int min_idx;
 	for (i = 0; i < edges - 1; i++) {
 		min_idx = i;
 		for (j = i + 1; j < edges; j++) {
@@ -61,6 +94,14 @@ void read_graph_from_file1 (char *filename, int *N, int *N_links, int **row_ptr,
 		swap(&sort[min_idx], &sort[i]);
 		swap(&(*col_idx)[min_idx], &(*col_idx)[i]);
 
+		printf("number of sorts: %d \n", i);
+	}*/
+	low = 0; high = edges-1;
+
+	quicksort(sort, low, high, (*col_idx));		
+
+	int k = 1;
+	for (i = 0; i < edges; i++) {
 		if (sort[i] == k-1) {
 			(*row_ptr)[k] += 1;
 		}
@@ -75,22 +116,6 @@ void read_graph_from_file1 (char *filename, int *N, int *N_links, int **row_ptr,
 			(*row_ptr)[sort[i]+1] += (*row_ptr)[k] + 1;
 			k = sort[i] + 1;
 		}
-		printf("number of sorts: %d \n", i);
-	}
-
-	if (sort[edges-1] == k - 1) {
-		(*row_ptr)[k] += 1;
-	}
-	else if (sort[edges-1] == k) {
-		k += 1;
-		(*row_ptr)[k] = (*row_ptr)[k - 1] + 1;
-	}
-	else {
-		for (j = 1; j <= sort[edges-1] - k; j++) {
-			(*row_ptr)[k + j] = (*row_ptr)[k];
-		}
-		(*row_ptr)[sort[edges-1] + 1] += (*row_ptr)[k] + 1;
-		k = sort[edges-1] + 1;
 	}
 	
 	if (k != nodes) {
@@ -98,19 +123,6 @@ void read_graph_from_file1 (char *filename, int *N, int *N_links, int **row_ptr,
 			(*row_ptr)[i] = (*row_ptr)[k];
 		}
 	}
-
-	for (i = 0; i < nodes+1; i++) {
-		printf("%d ", (*row_ptr)[i]);
-	}
-	printf("\n");
-	for (i = 0; i < edges; i++) {
-		printf("%d ", sort[i]);
-	}
-	printf("\n");
-	for (i = 0; i < edges; i++) {
-		printf("%d ", (*col_idx)[i]);
-	}
-	printf("\n");
 }
 
 int main(int argc, char* argv[]) {
