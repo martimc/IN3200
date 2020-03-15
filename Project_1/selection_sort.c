@@ -29,7 +29,7 @@ int partition (int *arr, int low, int high, int *arr2) {
 	}
 	i++;
 	swap(&arr[i], &arr[high]);
-	swap(&arr2[i], &arr2[high]); 
+	swap(&arr2[i], &arr2[high]);
 	return (i);
 }
 
@@ -44,7 +44,7 @@ void quicksort(int *sort, int low, int high, int *col_idx) {
 
 void read_graph_from_file1 (char *filename, int *N, int *N_links, int **row_ptr, int **col_idx){
 	FILE* datafile;
-	int j, i, low, high, nodes, edges, *sort;
+	int j, i, min_idx, nodes, edges, *sort;
 
 	datafile = fopen(filename, "r");
 
@@ -82,8 +82,8 @@ void read_graph_from_file1 (char *filename, int *N, int *N_links, int **row_ptr,
 		l++;
 	}
 	fclose(datafile);
-	printf("done reading file\n");
-	/*int min_idx;
+
+	int k = 1;
 	for (i = 0; i < edges - 1; i++) {
 		min_idx = i;
 		for (j = i + 1; j < edges; j++) {
@@ -94,14 +94,6 @@ void read_graph_from_file1 (char *filename, int *N, int *N_links, int **row_ptr,
 		swap(&sort[min_idx], &sort[i]);
 		swap(&(*col_idx)[min_idx], &(*col_idx)[i]);
 
-		printf("number of sorts: %d \n", i);
-	}*/
-	low = 0; high = edges-1;
-
-	quicksort(sort, low, high, (*col_idx));		
-
-	int k = 1;
-	for (i = 0; i < edges; i++) {
 		if (sort[i] == k-1) {
 			(*row_ptr)[k] += 1;
 		}
@@ -117,39 +109,38 @@ void read_graph_from_file1 (char *filename, int *N, int *N_links, int **row_ptr,
 			k = sort[i] + 1;
 		}
 	}
-	
+
+	if (sort[edges-1] == k - 1) {
+		(*row_ptr)[k] += 1;
+	}
+	else if (sort[edges-1] == k) {
+		k += 1;
+		(*row_ptr)[k] = (*row_ptr)[k - 1] + 1;
+	}
+	else {
+		for (j = 1; j <= sort[edges-1] - k; j++) {
+			(*row_ptr)[k + j] = (*row_ptr)[k];
+		}
+		(*row_ptr)[sort[edges-1] + 1] += (*row_ptr)[k] + 1;
+		k = sort[edges-1] + 1;
+	}
+
 	if (k != nodes) {
 		for (i = k; i <= nodes; i++) {
 			(*row_ptr)[i] = (*row_ptr)[k];
 		}
 	}
-}
 
-int main(int argc, char* argv[]) {
-	clock_t start_t, end_t, total_t;
-	char* filename;
-	int N, N_links, * row_ptr, * col_idx;
-
-	if (argc < 2) {
-
-		printf("Filename required.\n");
-		exit(0);
+	for (i = 0; i < nodes+1; i++) {
+		printf("%d ", (*row_ptr)[i]);
 	}
-	filename = argv[1];
-
-	start_t = clock();
-	printf("Starting of the program, start_t = %ld\n", start_t);
-
-	printf("Going to scan a big loop, start_t = %ld\n", start_t);
-
-	read_graph_from_file1(filename, &N, &N_links, &row_ptr, &col_idx);
-
-	end_t = clock();
-	printf("End of the big loop, end_t = %ld\n", end_t);
-
-	total_t = (double)((end_t - start_t) / CLOCKS_PER_SEC);
-	printf("Total time taken by CPU: %ld\n", total_t);
-	printf("Exiting of the program...\n");
-
-	return 0;
+	printf("\n");
+	for (i = 0; i < edges; i++) {
+		printf("%d ", sort[i]);
+	}
+	printf("\n");
+	for (i = 0; i < edges; i++) {
+		printf("%d ", (*col_idx)[i]);
+	}
+	printf("\n");
 }
