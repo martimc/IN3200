@@ -117,17 +117,4 @@ void read_graph_from_file1 (char *filename, int *N, int *N_links, int **row_ptr,
 	}
 
 	(*N_links) = edges;
-
-	/*for (i = 0; i <= nodes; i++){
-		printf("%d ", (*row_ptr)[i]);
-	}
-	printf("\n");
-	for (i = 0; i < edges; i++){
-		printf("%d ", sort[i]);
-	}
-	printf("\n");
-	for (i = 0; i < edges; i++){
-		printf("%d ", (*col_idx)[i]);
-	}
-	printf("\n");*/
 }
