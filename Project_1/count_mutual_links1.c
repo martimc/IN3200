@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <omp.h>
 #include <time.h>
 #include <stdlib.h>
 #include "read_graph_from_file1.c"
@@ -6,20 +7,42 @@
 int count_mutual_links1 (int N, char **table2D, int *num_involvements) {
   int m_links, incoming;
   m_links = 0;
-  for (int i = 0; i < N; i++){
-    incoming = 0;
-    for (int j = 0; j < N; j++){
-      incoming += table2D[i][j];
-    }
-    for (int j = 0; j < N; j++){
-      if (table2D[i][j] == 1){
-        num_involvements[j] += incoming-1;
+  #if defined(_OPENMP)
+  {
+    #pragma omp parallel for private(incoming) reduction(+:m_links)
+    for (int i = 0; i < N; i++){
+      incoming = 0;
+      for (int j = 0; j < N; j++){
+        incoming += table2D[i][j];
+      }
+      for (int j = 0; j < N; j++){
+        if (table2D[i][j] == 1){
+          num_involvements[j] += incoming-1;
+        }
+      }
+      if (incoming > 1){
+        m_links += (incoming*(incoming-1))/2;
       }
     }
-    if (incoming > 1){
-      m_links += (incoming*(incoming-1))/2;
+  }
+  #else
+  {
+    for (int i = 0; i < N; i++){
+      incoming = 0;
+      for (int j = 0; j < N; j++){
+        incoming += table2D[i][j];
+      }
+      for (int j = 0; j < N; j++){
+        if (table2D[i][j] == 1){
+          num_involvements[j] += incoming-1;
+        }
+      }
+      if (incoming > 1){
+        m_links += (incoming*(incoming-1))/2;
+      }
     }
   }
+  #endif
   return m_links;
 }
 
@@ -55,6 +78,6 @@ int main(int argc, char* argv[]) {
   for (int i = 0; i < N; i++){
     printf("%d ", num_involvements[i]);
   }
-
+  printf("\n");
 	return 0;
 }

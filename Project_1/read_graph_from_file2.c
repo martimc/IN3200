@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <time.h>
 #include <stdlib.h>
 
 void swap(int* xp, int* yp) {
@@ -42,7 +41,7 @@ void quicksort(int *sort, int low, int high, int *col_idx) {
 	}
 }
 
-void read_graph_from_file1 (char *filename, int *N, int *N_links, int **row_ptr, int **col_idx){
+void read_graph_from_file2(char *filename, int *N, int *N_links, int **row_ptr, int **col_idx){
 	FILE* datafile;
 	int j, i, low, high, nodes, edges, *sort;
 
