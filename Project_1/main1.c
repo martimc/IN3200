@@ -4,7 +4,9 @@
 
 int main(int argc, char* argv[]) {
 	char* filename;
-	int N, N_links, * row_ptr, * col_idx;
+	char** table2D;
+	int N, N_size, mutual_links;
+  int *num_involvements = (int*)malloc(N*sizeof(int*));
 
 	if (argc < 2) {
 
@@ -13,15 +15,13 @@ int main(int argc, char* argv[]) {
 	}
 	filename = argv[1];
 
-	read_graph_from_file2(filename, &N, &N_links, &row_ptr, &col_idx);
+	read_graph_from_file1(filename, &N, &table2D);
 
-  int *num_involvements = (int*)malloc(N*sizeof(int*));
   for (int i = 0; i < N; i++){
     num_involvements[i] = 0;
   }
 
-  int mutual_links;
-  mutual_links = count_mutual_links2(N, N_links, row_ptr, col_idx, num_involvements);
+  mutual_links = count_mutual_links1(N, table2D, num_involvements);
   printf("number of mutual links: %d\n", mutual_links);
 
   int n;
