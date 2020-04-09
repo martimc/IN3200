@@ -17,3 +17,7 @@ main1_OMP: main1.c count_mutual_links1.c read_graph_from_file1.c top_n_webpages.
 test: test_file.c count_mutual_links1.c read_graph_from_file1.c top_n_webpages.c count_mutual_links2.c read_graph_from_file2.c
 	gcc test_file.c count_mutual_links1.c read_graph_from_file1.c top_n_webpages.c count_mutual_links2.c read_graph_from_file2.c -I. -o test_file.exe
 	./test_file.exe test.txt
+
+test_OMP: test_file.c count_mutual_links1.c read_graph_from_file1.c top_n_webpages.c count_mutual_links2.c read_graph_from_file2.c
+	gcc -fopenmp test_file.c count_mutual_links1.c read_graph_from_file1.c top_n_webpages.c count_mutual_links2.c read_graph_from_file2.c -I. -o test_file.exe
+	./test_file.exe p2p-Gnutella08.txt p2p-Gnutella08.txt
