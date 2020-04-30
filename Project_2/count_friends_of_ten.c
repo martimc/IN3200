@@ -4,7 +4,7 @@
 int count_friends_of_ten(int M, int N, int **v){
   int up_diag, down_diag, right, down, friends_of_ten;
   friends_of_ten = 0;
-  if (M < 3){
+  if (M < 3 && N > 2){
     for (int i = 0; i < M; i++){
       for (int j = 0; j < N-2; j++){
         right = v[i][j] + v[i][j+1] + v[i][j+2];
@@ -30,7 +30,7 @@ int count_friends_of_ten(int M, int N, int **v){
       else if (i < M-2 && j > N-3){ // last two columns except the final two rows
         down = v[i][j] + v[i+1][j] + v[i+2][j];
       }
-      else if (i > 2 && i < M-2 && j < N-2){ // everything except the first and last two rows and last two
+      else if (i > 1 && i < M-2 && j < N-2){ // everything except the first and last two rows and last two
         up_diag = v[i][j] + v[i-1][j+1] + v[i-2][j+2];
         right = v[i][j] + v[i][j+1] + v[i][j+2];
         down_diag = v[i][j] + v[i+1][j+1] + v[i+2][j+2];
